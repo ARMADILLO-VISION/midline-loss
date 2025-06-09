@@ -28,7 +28,6 @@ from config import (
 )
 from pointnet_data_loader import get_dataloaders
 from models.pointnet2_model import PointNet2Seg
-from fine_tune import LogitsAdapter, GeometryAwareAdapter
 
 ################################################################################
 # Hausdorff Distance
@@ -353,10 +352,6 @@ def main():
                         help="Path to the saved model checkpoint")
     parser.add_argument("--output_csv", default="evaluation.csv",
                         help="CSV output file for combined results")
-    parser.add_argument("--fine_tuned", action="store_true", default=False,
-                        help="Set if the checkpoint is from a PEFT fine-tuning run")
-    parser.add_argument("--bfs", action="store_true",
-                        help="Use BFS refined predictions instead of raw predictions")
     parser.add_argument("--eval_on_val", action="store_true",
                         help="Evaluate on the validation set instead of the test set")
     args = parser.parse_args()
@@ -387,11 +382,6 @@ def main():
 
     # Build the model
     model = PointNet2Seg(num_classes=NUM_CLASSES)
-    if args.fine_tuned:
-        print("Adding PEFT adapters for the fine-tuned checkpoint.")
-        model.logits_adapter = LogitsAdapter(num_classes=NUM_CLASSES)
-        model.geometry_adapter = GeometryAwareAdapter(in_channels=NUM_CLASSES,
-                                                        out_channels=NUM_CLASSES)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     checkpoint_path = os.path.join(SAVE_DIR, args.checkpoint)
     if not os.path.exists(checkpoint_path):
