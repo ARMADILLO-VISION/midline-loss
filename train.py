@@ -119,7 +119,7 @@ def train_model(alpha_ce, lam_ridge, lam_lig, learning_rate=LEARNING_RATE):
                 visualise=False
             )
 
-        Validation.
+        # Validation.
         model.eval()
         total_val_loss = 0.0
         with torch.no_grad():

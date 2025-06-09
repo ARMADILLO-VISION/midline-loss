@@ -246,7 +246,6 @@ class DatasetPreparer:
             vertices = mesh.vertices
 
             if self.xukun_data:
-                # Original logic for Xukun data (single NPZ per patient)
                 labels = self.create_labels(vertices, patient_info["annotations"])
                 for i in range(num_augmentations):
                     print(f"Applying augmentation {i + 1}/{num_augmentations} for Patient {patient_id}...")
@@ -260,7 +259,6 @@ class DatasetPreparer:
                     if visualise:
                         self.visualise_augmented_patient(patient_id, vertices, labels, augmented_vertices)
             else:
-                # For default patient data, iterate over each XML annotation
                 for xml_filename, contours in patient_info["annotations"].items():
                     valid = any(contour['type'] in ['Ridge', 'Ligament'] and contour['model_points'] for contour in contours)
                     if not valid:
